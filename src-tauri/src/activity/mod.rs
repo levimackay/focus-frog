@@ -15,6 +15,15 @@ use thiserror::Error;
 #[derive(Debug, Error, Serialize)]
 #[serde(tag = "kind", content = "message")]
 pub enum ActivityError {
+    // Constructed by the macOS/Windows providers when the idle-time query
+    // fails. The Linux provider deliberately never returns this -- see the
+    // doc comment on `linux::LinuxActivityProvider`, which degrades to
+    // `idle_seconds: 0.0` instead of erroring, since idle/active-window
+    // query failures are an expected, common occurrence under Wayland
+    // rather than an exceptional condition worth propagating. That means
+    // this variant is genuinely unconstructed in a Linux-only build --
+    // not dead code on the platforms that use it.
+    #[cfg_attr(target_os = "linux", allow(dead_code))]
     #[error("failed to query system idle time: {0}")]
     Idle(String),
 }
