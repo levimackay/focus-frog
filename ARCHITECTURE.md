@@ -328,14 +328,65 @@ functions (`platform::macos::apply_companion_window_style(window)`, etc.) rather
 inline `cfg!` blocks in business logic:
 - Main window: normal window, used for onboarding, settings, stats.
 - Companion window: separate small transparent, always-on-top, decoration-less window
-  used only during an active session, showing the frog. Click-through is enabled by
-  default over its transparent regions and disabled over the frog sprite itself using
-  a polling toggle of `set_ignore_cursor_events` based on cursor-over-sprite bounds
-  (Tauri 2 has no native per-pixel hit testing yet — documented upstream limitation).
+  used only during an active session, showing the frog. Sized to `frog_size + 48` wide
+  by `frog_size + 48 + COMPANION_BUBBLE_HEADROOM` (140px) tall — the sprite always
+  occupies the bottom square, the headroom above it is reserved for the speech bubble.
+  Click-through is enabled by default over the whole window and disabled only while the
+  cursor is over the sprite's own bounds, via `start_companion_hit_test_loop` — a 50ms
+  poll of `Window::cursor_position()` (global desktop coords, added to Tauri 2 core)
+  compared against the window's own `outer_position()`/`outer_size()`, toggling
+  `set_ignore_cursor_events` on change (Tauri 2 has no native per-pixel hit testing yet,
+  so this coarse polling toggle is the documented workaround). This is also what makes
+  the frog draggable: with click-through off over the sprite, `CompanionWindow.tsx`'s
+  `mousedown` handler calls `getCurrentWindow().startDragging()`, and a `tauri://move`
+  listener persists the new position via `set_frog_position` (converting the JS API's
+  physical-pixel `outerPosition()` to the logical pixels `frog_position` is stored in).
 - Nuclear-mode overlay: a third window, only created when `EngineInput` drives the
   engine into `Intervention` under the Nuclear profile, full-screen-ish, always-on-top,
   requires `acknowledge_intervention` (button, or emergency hotkey) to close. It must
   never block the global emergency shortcut or OS-level window close.
+
+### 9.1 Frontend window routing (`src/main.tsx`, `src/windows/`)
+
+One Vite bundle serves all three windows; `create_companion_window` /
+`create_nuclear_window` in `lib.rs` open them at `index.html#/companion` and
+`index.html#/nuclear` respectively (plain `index.html` for `main`). The
+frontend keys off `location.hash` at startup
+(`src/windows/resolveWindowKind.ts`) rather than
+`getCurrentWindow().label` from `@tauri-apps/api/window` — it's the same
+signal the backend already uses to distinguish the windows, needs no
+additional Tauri API surface or capability grant beyond what `main`'s and
+`session-windows`' `core:default` already cover, and behaves identically
+under `vite dev`/`vite preview`/vitest where `window.__TAURI_INTERNALS__`
+doesn't exist.
+
+- `src/windows/CompanionWindow.tsx` renders `<Frog>` + `<SpeechBubble>`,
+  driven by the same `sessionStore`/`companionStore`/`useFocusFrogEvents`
+  the main window's session HUD uses — both surfaces stay in sync off the
+  same `session:update`/`companion:message` events, no separate state.
+  `frog_size` is read from settings so it matches the native window, which
+  `create_companion_window` sizes to `frog_size + 48` wide by
+  `frog_size + 48 + COMPANION_BUBBLE_HEADROOM` tall, reserving room above
+  the sprite for the speech bubble so it no longer clips at the window edge.
+  Dragging the sprite (`.companion-window__sprite`, `mousedown` →
+  `startDragging()`) is gated by `start_companion_hit_test_loop` on the
+  Rust side, which only stops ignoring cursor events while the pointer is
+  over the sprite's bounds — see section 9 above.
+- `src/windows/NuclearWindow.tsx` renders the exact same
+  `<InterventionOverlay>` component the main window uses for a
+  non-nuclear (escalation 3) intervention — no nuclear-specific fork —
+  so the emergency-exit guarantees are identical in both places.
+- Because the nuclear window now owns escalation level 4 end-to-end, the
+  main window's own session view only renders `<InterventionOverlay>`
+  inline for escalation level 3 (`App.tsx`); at level 4 it stays out of the
+  way so the user never sees two overlays stacked.
+- **Main window during an active session**: shows the full session HUD
+  (timer, goal, frog, controls), not a stripped-down status view. The
+  companion window is the always-on-top "frog lives on the desktop"
+  surface; the main window is what the user sees when they deliberately
+  bring Focus Frog forward (e.g. to check stats mid-session or abandon),
+  and reusing the HUD as-is means goal/counters/controls are available
+  there without a second, thinner UI to maintain.
 
 ## 10. Personality system (`companion/personality.rs`)
 
@@ -355,3 +406,61 @@ all frog dialogue comes from `companion:message` events sourced from this module
 - Capabilities file grants only the specific commands above plus the specific plugin permissions needed (autostart, global-shortcut register/unregister, opener open-url), nothing wildcard.
 - All free-text input (goal, success criteria, journal, companion name) is length-capped both in TS (form validation) and Rust (defense in depth) before hitting the DB.
 - SQLite access exclusively through parameterized queries in `db/repository.rs` — no string-built SQL anywhere.
+
+## 12. Backend implementation notes (filled gaps, not deviations)
+
+The directory tree in section 2 and the payload shapes above were followed exactly.
+A few things the contract didn't pin down were resolved during implementation; recorded
+here so the frontend and any future backend work stay in sync:
+
+- **`settings.rs`** (new, top-level sibling of `state.rs`): the `Settings`/`Theme` types
+  from section 6 needed a home; neither `commands/` nor `db/` was the right owner since
+  both depend on it. `commands/settings.rs` and `db/repository.rs` both import it.
+- **`commands/window.rs`** (new): section 2's tree only illustrates 4 files under
+  `commands/`, but section 7 defines a `window::` command namespace — this file holds it.
+- **`platform/`** (new, top-level): section 9 references `platform::macos::apply_companion_window_style(window)` by name without listing the module in section 2's tree; added exactly as described, with `macos.rs`/`windows.rs`/`linux.rs` siblings.
+- **Companion/nuclear window content**: both load `index.html#/companion` and
+  `index.html#/nuclear` respectively (main window loads plain `index.html`). The
+  frontend should route on `location.hash` (or read `getCurrentWindow().label`, which
+  is `"main"` / `"companion"` / `"nuclear"`) rather than expecting separate HTML entry
+  points — there is only one Vite entry (`index.html` / `main.tsx`).
+- **`StatsSummary`/`SessionSummary`** (section 7's `stats::` commands): field shapes
+  weren't specified, and the frontend (built in parallel from the same gap) landed on
+  its own names first. Backend was aligned to match what `src/ipc/types.ts` already
+  committed to: `StatsSummary { range, sessions_count, completions, abandonments,
+  focused_seconds, distractions_defeated, current_streak_days, longest_streak_days }`
+  and `SessionSummary { id, goal, status, planned_duration_secs, distraction_count,
+  intervention_count, started_at, ended_at }`. `focused_seconds` is an approximation
+  (planned duration for completed sessions, wall-clock elapsed for abandoned ones),
+  not a precise focused-time integral.
+- **`FocusState` / `Personality` JSON casing**: serialized with serde's default
+  (PascalCase, matching the Rust variant names verbatim -- `"Idle"`, `"Focused"`,
+  `"PassiveAggressive"`, etc.), matching `src/ipc/types.ts`'s existing unions.
+  `AnnoyanceProfile`/`Theme`/`StatsRange` stay `#[serde(rename_all = "snake_case")]`
+  (`"gentle"`, `"system"`, `"week"`, ...) -- also matching the frontend, which expects
+  those lowercase. Note this means `FocusState`/`Personality`'s wire format differs
+  from their DB storage format: both have a separate `as_str()` used only for SQLite
+  columns (`"idle"`, `"friendly"`, etc.), independent of the serde derive.
+- **`CompanionProfile`**: includes an `id: 1` field (always the literal `1`, mirroring
+  the DB table's singleton-row check-constraint), matching the frontend's TS type.
+- **`emergency_exit`**: always abandons the active session outright (the panic
+  button), rather than conditionally acknowledging vs. abandoning depending on state.
+  This guarantees the nuclear overlay and companion windows are always torn down by
+  the same terminal-state teardown path, regardless of what state the engine was in
+  when the hotkey fired.
+- **Companion message personality**: sourced from live `Settings.default_personality`
+  at message-emit time, not frozen from what was active when the session started
+  (even though the session's `personality` column in `focus_sessions` does record the
+  value at start time, for the stats/history record).
+- **Capabilities**: split into `capabilities/default.json` (main window only —
+  `core:default`, `opener:allow-open-url` scoped to `https://*`, `autostart:*`,
+  `global-shortcut:allow-register`/`allow-unregister`) and
+  `capabilities/session-windows.json` (companion + nuclear windows — `core:default`
+  only, no opener/autostart/global-shortcut). App-defined commands (everything under
+  `commands/`) are not part of Tauri's ACL system at all — only plugin-exposed
+  commands are — confirmed against the build-generated
+  `gen/schemas/desktop-schema.json`, which contains no `focus-frog:*` identifiers.
+- **`EngineInput::Tick`**: wired into `session::get_active_session` (so a poll between
+  activity samples still catches duration-based completion) and into the activity
+  polling loop's error-recovery branch (so a broken activity provider can't prevent a
+  session from ever completing).

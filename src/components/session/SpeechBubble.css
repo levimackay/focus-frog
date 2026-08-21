@@ -1,0 +1,33 @@
+.speech-bubble-slot {
+  min-height: 3.2em;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.speech-bubble {
+  position: relative;
+  max-width: 34ch;
+  background: var(--color-surface);
+  border: 1px solid var(--color-surface-border);
+  border-radius: var(--radius-panel);
+  padding: var(--space-3) var(--space-4);
+  font-size: 0.95rem;
+  line-height: 1.4;
+  box-shadow: var(--shadow-panel);
+  text-align: center;
+}
+
+.speech-bubble::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -7px;
+  translate: -50% 0;
+  width: 14px;
+  height: 14px;
+  background: var(--color-surface);
+  border-right: 1px solid var(--color-surface-border);
+  border-bottom: 1px solid var(--color-surface-border);
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+}

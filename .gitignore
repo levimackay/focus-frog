@@ -12,6 +12,25 @@ dist
 dist-ssr
 *.local
 
+# Rust build output (also covered by src-tauri/.gitignore; kept here in
+# case cargo is ever invoked from the repo root)
+target
+
+# Local app data — the SQLite DB is created at runtime and must never be
+# committed (it can contain a user's real session goals/journal entries)
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+*.sqlite
+*.sqlite3
+*.sqlite-journal
+
+# Env files that may hold local secrets
+.env
+.env.local
+.env.*.local
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
@@ -22,3 +41,9 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# macOS
+.AppleDouble
+.LSOverride
+Icon?
+._*

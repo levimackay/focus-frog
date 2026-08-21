@@ -1,0 +1,69 @@
+.intervention-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-6);
+  padding: var(--space-6);
+  background: color-mix(in srgb, var(--color-ember-1) 20%, var(--color-bg) 80%);
+  color: var(--color-ink);
+  text-align: center;
+}
+
+.intervention-overlay--nuclear {
+  background: color-mix(in srgb, var(--color-nuclear) 32%, var(--color-bg) 68%);
+}
+
+.emergency-exit {
+  position: absolute;
+  top: var(--space-4);
+  right: var(--space-4);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-panel);
+  border: 2px solid var(--color-ember-2);
+  background: var(--color-surface);
+  color: var(--color-ember-2);
+  font-weight: 700;
+  z-index: 2;
+}
+
+.emergency-exit kbd {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  background: var(--color-bg-elevated);
+  border-radius: var(--radius-tight);
+  padding: 2px 6px;
+}
+
+.intervention-body {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+  max-width: 480px;
+}
+
+.intervention-body h2 {
+  font-size: 2rem;
+}
+
+.intervention-body p {
+  color: var(--color-ink-dim);
+  line-height: 1.6;
+}
+
+.intervention-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-3);
+  margin-top: var(--space-2);
+}

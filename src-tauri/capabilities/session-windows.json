@@ -1,0 +1,12 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "session-windows",
+  "description": "Capability for the ephemeral, session-scoped companion and nuclear-overlay windows. Deliberately excludes opener/autostart/global-shortcut -- neither window ever needs them.",
+  "windows": ["companion", "nuclear"],
+  "permissions": [
+    "core:default",
+    "core:window:allow-start-dragging",
+    "core:window:allow-outer-position",
+    "core:window:allow-scale-factor"
+  ]
+}

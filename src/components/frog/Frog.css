@@ -1,0 +1,78 @@
+.frog-root {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.frog-tilt {
+  width: 100%;
+  height: 100%;
+  transform-origin: 50% 65%;
+}
+
+.frog-ambient {
+  position: absolute;
+  pointer-events: none;
+}
+
+.frog-ambient-zzz {
+  top: -6%;
+  right: 4%;
+  display: flex;
+  gap: 2px;
+  font-family: var(--font-display);
+  font-weight: 700;
+  color: var(--color-ink-dim);
+  font-size: 1.1em;
+}
+
+.frog-ambient-sweat {
+  top: 8%;
+  right: 14%;
+  width: 8px;
+  height: 11px;
+  background: color-mix(in srgb, var(--color-ember-1) 60%, #6cb7e8);
+  border-radius: 60% 60% 60% 0;
+  transform: rotate(45deg);
+}
+
+.frog-ambient-exclaim {
+  top: -18%;
+  left: 50%;
+  translate: -50% 0;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1.4em;
+  color: var(--color-ember-2);
+}
+
+.frog-ambient-lines {
+  top: 40%;
+  left: -8%;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.frog-ambient-lines span {
+  width: 14px;
+  height: 2px;
+  background: var(--color-ink-faint);
+  border-radius: 2px;
+}
+
+.frog-ambient-petals {
+  position: absolute;
+  inset: 0;
+  overflow: visible;
+}
+
+.frog-ambient-petals .petal {
+  position: absolute;
+  top: 0;
+  width: 7px;
+  height: 7px;
+  background: var(--color-accent);
+  border-radius: 60% 0 60% 0;
+}

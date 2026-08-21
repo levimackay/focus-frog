@@ -1,0 +1,104 @@
+.session-hud {
+  position: relative;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-6);
+  padding: var(--space-7) var(--space-5) var(--space-6);
+  overflow: hidden;
+}
+
+.escalation-field {
+  position: absolute;
+  inset: -20%;
+  z-index: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    circle at 50% 30%,
+    color-mix(in srgb, var(--color-ember-1) calc(8% + 6% * var(--esc, 0)), transparent),
+    transparent 60%
+  );
+}
+
+.session-hud[data-escalation="0"] .escalation-field {
+  --esc: 0;
+}
+.session-hud[data-escalation="1"] .escalation-field {
+  --esc: 1;
+}
+.session-hud[data-escalation="2"] .escalation-field {
+  --esc: 3;
+}
+.session-hud[data-escalation="3"] .escalation-field {
+  --esc: 6;
+}
+.session-hud[data-escalation="4"] .escalation-field {
+  --esc: 10;
+}
+
+.session-hud-header {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  text-align: center;
+}
+
+.session-timer {
+  font-family: var(--font-mono);
+  font-size: clamp(2.4rem, 8vw, 3.2rem);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+
+.session-goal {
+  color: var(--color-ink-dim);
+  max-width: 40ch;
+}
+
+.session-stats {
+  display: flex;
+  gap: var(--space-5);
+  margin-top: var(--space-2);
+}
+
+.session-stats div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.session-stats dt {
+  font-size: 0.75rem;
+  color: var(--color-ink-faint);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.session-stats dd {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-weight: 600;
+}
+
+.session-frog-area {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.frog-hidden-note {
+  color: var(--color-ink-faint);
+  font-size: 0.9rem;
+  min-height: 140px;
+  display: flex;
+  align-items: center;
+}

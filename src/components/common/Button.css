@@ -1,0 +1,68 @@
+.ff-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  border-radius: var(--radius-panel);
+  border: 1px solid transparent;
+  font-family: var(--font-ui);
+  font-weight: 600;
+  font-size: 0.95rem;
+  padding: var(--space-3) var(--space-5);
+  transition:
+    transform var(--duration-fast) var(--ease-out),
+    background var(--duration-fast) var(--ease-out),
+    border-color var(--duration-fast) var(--ease-out);
+}
+
+.ff-button:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+.ff-button--lg {
+  padding: var(--space-4) var(--space-6);
+  font-size: 1.05rem;
+}
+
+.ff-button--primary {
+  background: var(--color-accent);
+  color: var(--color-accent-ink);
+}
+
+.ff-button--primary:hover:not(:disabled) {
+  background: var(--color-accent-strong);
+}
+
+.ff-button--secondary {
+  background: var(--color-surface);
+  color: var(--color-ink);
+  border-color: var(--color-surface-border);
+}
+
+.ff-button--secondary:hover:not(:disabled) {
+  border-color: var(--color-accent);
+}
+
+.ff-button--ghost {
+  background: transparent;
+  color: var(--color-ink-dim);
+}
+
+.ff-button--ghost:hover:not(:disabled) {
+  color: var(--color-ink);
+  background: var(--color-bg-elevated);
+}
+
+.ff-button--danger {
+  background: transparent;
+  color: var(--color-ember-2);
+  border-color: color-mix(in srgb, var(--color-ember-2) 50%, transparent);
+}
+
+.ff-button--danger:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--color-ember-2) 12%, transparent);
+}
+
+.ff-button:disabled {
+  opacity: 0.5;
+}

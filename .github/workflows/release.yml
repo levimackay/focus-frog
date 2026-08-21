@@ -1,0 +1,99 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+# NOTE on code signing: Focus Frog does not yet have an Apple Developer ID
+# or a Windows code-signing certificate, so this workflow produces UNSIGNED
+# bundles (macOS builds are also unnotarized). Unsigned .dmg/.msi will show
+# OS security warnings (Gatekeeper "unidentified developer" / SmartScreen)
+# on install. This is fine for early releases but should be fixed before
+# a wide public release.
+#
+# To add signing later, without inventing values that don't exist yet:
+#   macOS (signing + notarization):
+#     - APPLE_CERTIFICATE (base64 .p12), APPLE_CERTIFICATE_PASSWORD
+#     - APPLE_SIGNING_IDENTITY
+#     - APPLE_ID, APPLE_PASSWORD (app-specific password), APPLE_TEAM_ID
+#   Windows (Authenticode):
+#     - WINDOWS_CERTIFICATE (base64 .pfx), WINDOWS_CERTIFICATE_PASSWORD
+#   Tauri updater signing (if/when the auto-updater is adopted):
+#     - TAURI_SIGNING_PRIVATE_KEY, TAURI_SIGNING_PRIVATE_KEY_PASSWORD
+#   All of the above get added as GitHub Actions secrets (repo Settings ->
+#   Secrets and variables -> Actions) and referenced via `env:` on the
+#   tauri-action step below — see tauri-apps/tauri-action's README for the
+#   exact env var names it reads for each platform.
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: macos-latest
+            args: ""
+          - platform: ubuntu-latest
+            args: ""
+          - platform: windows-latest
+            args: ""
+    runs-on: ${{ matrix.platform }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Tauri Linux system dependencies
+        if: matrix.platform == 'ubuntu-latest'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libwebkit2gtk-4.1-dev \
+            libayatana-appindicator3-dev \
+            librsvg2-dev \
+            patchelf \
+            xdg-utils \
+            build-essential \
+            curl \
+            wget \
+            file \
+            libxdo-dev \
+            libssl-dev
+
+      - name: Install Rust stable toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri -> target
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install frontend dependencies
+        run: npm ci
+
+      - uses: tauri-apps/tauri-action@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Signing envs intentionally omitted — see note at top of file.
+          # Add them here once real secrets exist, e.g.:
+          # APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE }}
+          # APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
+          # APPLE_SIGNING_IDENTITY: ${{ secrets.APPLE_SIGNING_IDENTITY }}
+          # APPLE_ID: ${{ secrets.APPLE_ID }}
+          # APPLE_PASSWORD: ${{ secrets.APPLE_PASSWORD }}
+          # APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          # WINDOWS_CERTIFICATE: ${{ secrets.WINDOWS_CERTIFICATE }}
+          # WINDOWS_CERTIFICATE_PASSWORD: ${{ secrets.WINDOWS_CERTIFICATE_PASSWORD }}
+        with:
+          tagName: ${{ github.ref_name }}
+          releaseName: "Focus Frog ${{ github.ref_name }}"
+          releaseBody: "See CHANGELOG.md for details. Unsigned build — see release workflow for signing status."
+          releaseDraft: true
+          prerelease: false
+          args: ${{ matrix.args }}

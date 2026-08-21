@@ -1,0 +1,165 @@
+/*
+ * Design identity: "Dusk Pond".
+ *
+ * Not garden-hose green-on-white SaaS. The frog lives at the edge of a pond
+ * at dusk: deep teal-black water, warm parchment light, and one hot
+ * accent — firefly gold — that only shows up where attention should go
+ * (the timer, the primary action, escalation). Escalation states borrow a
+ * second accent, ember, which gets warmer/redder as the session heats up.
+ *
+ * Dark is the primary mode (a focus companion mostly runs at night/desk-lamp
+ * hours); light is a genuine parchment daytime mode, not an inverted dark
+ * theme with the values flipped.
+ */
+
+:root {
+  /* ---- type ---- */
+  --font-display: "Fraunces Variable", "Iowan Old Style", ui-serif, Georgia, serif;
+  --font-ui: "Bricolage Grotesque Variable", "Avenir Next", ui-sans-serif, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", monospace;
+
+  /* ---- space ---- */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+  --space-9: 96px;
+
+  /* ---- radius ---- */
+  /* Deliberately not-uniform: the frog and its lily-pad chrome are round,
+     structural UI (panels, inputs) is nearly square. */
+  --radius-organic: 999px;
+  --radius-panel: 10px;
+  --radius-tight: 4px;
+
+  /* ---- motion ---- */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-hop: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --duration-fast: 120ms;
+  --duration-base: 240ms;
+  --duration-slow: 480ms;
+
+  /* ---- light palette (parchment pond, daytime) ---- */
+  --color-bg: #f3ecd8;
+  --color-bg-elevated: #ece1c6;
+  --color-surface: #fffbf1;
+  --color-surface-border: #ddceaa;
+  --color-water: #cfe0d0;
+  --color-ink: #1c2a20;
+  --color-ink-dim: #56604f;
+  --color-ink-faint: #8a8a72;
+
+  --color-frog: #4c7a38;
+  --color-frog-deep: #345526;
+  --color-frog-belly: #eef0c9;
+
+  --color-accent: #a8710d;
+  --color-accent-strong: #8a5c08;
+  --color-accent-ink: #fffaf0;
+
+  --color-ember-1: #c1662f;
+  --color-ember-2: #b8432a;
+  --color-ember-3: #9c2a21;
+  --color-nuclear: #6e1414;
+
+  --color-focus-ring: #1c2a20;
+  --shadow-panel: 0 1px 0 rgba(28, 42, 32, 0.06), 0 12px 24px -16px rgba(28, 42, 32, 0.25);
+}
+
+/* ---- dark palette (dusk pond, primary mode) ---- */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --color-bg: #0b1614;
+    --color-bg-elevated: #11201c;
+    --color-surface: #16261f;
+    --color-surface-border: #223a30;
+    --color-water: #17332c;
+    --color-ink: #eef3e9;
+    --color-ink-dim: #a7b8ab;
+    --color-ink-faint: #6d8177;
+
+    --color-frog: #7fa85c;
+    --color-frog-deep: #4a6f39;
+    --color-frog-belly: #eef0c9;
+
+    --color-accent: #e8b13d;
+    --color-accent-strong: #f5c85c;
+    --color-accent-ink: #21170a;
+
+    --color-ember-1: #d97a45;
+    --color-ember-2: #e0532f;
+    --color-ember-3: #ef3a24;
+    --color-nuclear: #ff2e1f;
+
+    --color-focus-ring: #f5c85c;
+    --shadow-panel: 0 1px 0 rgba(0, 0, 0, 0.4), 0 20px 40px -20px rgba(0, 0, 0, 0.6);
+  }
+}
+
+:root[data-theme="dark"] {
+  --color-bg: #0b1614;
+  --color-bg-elevated: #11201c;
+  --color-surface: #16261f;
+  --color-surface-border: #223a30;
+  --color-water: #17332c;
+  --color-ink: #eef3e9;
+  --color-ink-dim: #a7b8ab;
+  --color-ink-faint: #6d8177;
+
+  --color-frog: #7fa85c;
+  --color-frog-deep: #4a6f39;
+  --color-frog-belly: #eef0c9;
+
+  --color-accent: #e8b13d;
+  --color-accent-strong: #f5c85c;
+  --color-accent-ink: #21170a;
+
+  --color-ember-1: #d97a45;
+  --color-ember-2: #e0532f;
+  --color-ember-3: #ef3a24;
+  --color-nuclear: #ff2e1f;
+
+  --color-focus-ring: #f5c85c;
+  --shadow-panel: 0 1px 0 rgba(0, 0, 0, 0.4), 0 20px 40px -20px rgba(0, 0, 0, 0.6);
+}
+
+:root[data-theme="light"] {
+  --color-bg: #f3ecd8;
+  --color-bg-elevated: #ece1c6;
+  --color-surface: #fffbf1;
+  --color-surface-border: #ddceaa;
+  --color-water: #cfe0d0;
+  --color-ink: #1c2a20;
+  --color-ink-dim: #56604f;
+  --color-ink-faint: #8a8a72;
+
+  --color-frog: #4c7a38;
+  --color-frog-deep: #345526;
+  --color-frog-belly: #eef0c9;
+
+  --color-accent: #a8710d;
+  --color-accent-strong: #8a5c08;
+  --color-accent-ink: #fffaf0;
+
+  --color-ember-1: #c1662f;
+  --color-ember-2: #b8432a;
+  --color-ember-3: #9c2a21;
+  --color-nuclear: #6e1414;
+
+  --color-focus-ring: #1c2a20;
+  --shadow-panel: 0 1px 0 rgba(28, 42, 32, 0.06), 0 12px 24px -16px rgba(28, 42, 32, 0.25);
+}
+
+/* Explicit reduced-motion setting (from Settings > Appearance) toggles this
+   attribute in App.tsx; combine with the OS-level media query in
+   src/styles/global.css so *either* source disables motion. */
+:root[data-reduced-motion="true"] {
+  --duration-fast: 0ms;
+  --duration-base: 0ms;
+  --duration-slow: 0ms;
+}

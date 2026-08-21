@@ -1,0 +1,182 @@
+.settings-screen {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: var(--space-6) var(--space-5) var(--space-8);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.settings-header {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-2);
+}
+
+.settings-header h1 {
+  font-size: 1.8rem;
+}
+
+.settings-body {
+  display: grid;
+  grid-template-columns: 180px 1fr;
+  gap: var(--space-6);
+  align-items: start;
+}
+
+.settings-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  position: sticky;
+  top: var(--space-5);
+}
+
+.settings-nav-item {
+  text-align: left;
+  border: none;
+  background: transparent;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-tight);
+  color: var(--color-ink-dim);
+  font-size: 0.9rem;
+}
+
+.settings-nav-item--active {
+  background: var(--color-bg-elevated);
+  color: var(--color-ink);
+  font-weight: 600;
+}
+
+.settings-panel {
+  background: var(--color-surface);
+  border: 1px solid var(--color-surface-border);
+  border-radius: var(--radius-panel);
+  padding: var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.settings-panel h2 {
+  font-size: 1.2rem;
+  margin-bottom: var(--space-2);
+}
+
+.section-note {
+  color: var(--color-ink-faint);
+  font-size: 0.85rem;
+  line-height: 1.5;
+  margin-bottom: var(--space-2);
+}
+
+.field-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-3) 0;
+  border-top: 1px solid var(--color-surface-border);
+}
+
+.field-row:first-of-type {
+  border-top: none;
+}
+
+.field-row label,
+.field-row > span:first-child {
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.field-row select,
+.field-row input[type="text"] {
+  font-family: var(--font-ui);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-tight);
+  border: 1px solid var(--color-surface-border);
+  background: var(--color-bg);
+  color: var(--color-ink);
+}
+
+.field-row--stacked {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-1);
+}
+
+.field-row--stacked p {
+  color: var(--color-ink-faint);
+  font-size: 0.85rem;
+}
+
+.seconds-input {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-family: var(--font-mono);
+}
+
+.seconds-input input {
+  width: 80px;
+  padding: var(--space-2);
+  border-radius: var(--radius-tight);
+  border: 1px solid var(--color-surface-border);
+  background: var(--color-bg);
+  color: var(--color-ink);
+  font-family: var(--font-mono);
+}
+
+.distracting-apps-form {
+  display: flex;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
+}
+
+.distracting-apps-form input {
+  flex: 1;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-tight);
+  border: 1px solid var(--color-surface-border);
+  background: var(--color-bg);
+  color: var(--color-ink);
+}
+
+.distracting-apps-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.distracting-apps-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-tight);
+  background: var(--color-bg);
+}
+
+.distracting-apps-list button {
+  border: none;
+  background: transparent;
+  color: var(--color-ember-2);
+  font-size: 0.85rem;
+}
+
+.distracting-apps-empty {
+  color: var(--color-ink-faint);
+  font-size: 0.9rem;
+}
+
+kbd {
+  font-family: var(--font-mono);
+  background: var(--color-bg-elevated);
+  border-radius: var(--radius-tight);
+  padding: 2px 6px;
+}

@@ -1,0 +1,22 @@
+/*
+ * Self-hosted fonts via @fontsource — no network requests at runtime, which
+ * matters for a desktop app that should work offline. Do not swap these for
+ * a Google Fonts <link>.
+ *
+ * Fraunces Variable   — display: headings, the frog's name, big stats,
+ *                        completion/celebration moments. A soft-serif with
+ *                        real optical-size wonk; it is what keeps this app
+ *                        from reading as another SaaS dashboard.
+ * Bricolage Grotesque  — UI: body copy, buttons, labels, settings forms.
+ *                        A grotesque with just enough personality to avoid
+ *                        Inter/Roboto/system-stack blandness.
+ * JetBrains Mono       — numerals: the countdown timer, stat figures,
+ *                        keyboard-shortcut hints. Contrast against the
+ *                        organic display face reads as "instrument panel".
+ */
+@import "@fontsource-variable/fraunces/wght.css";
+@import "@fontsource-variable/bricolage-grotesque/wght.css";
+@import "@fontsource/jetbrains-mono/400.css";
+@import "@fontsource/jetbrains-mono/500.css";
+@import "@fontsource/jetbrains-mono/600.css";
+@import "@fontsource/jetbrains-mono/700.css";
