@@ -22,7 +22,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: npm
 
       - name: Install dependencies
@@ -63,7 +63,9 @@ jobs:
             wget \
             file \
             libxdo-dev \
-            libssl-dev
+            libssl-dev \
+            libx11-dev \
+            libxss-dev
 
       - name: Install Rust stable toolchain
         uses: dtolnay/rust-toolchain@stable
@@ -115,7 +117,9 @@ jobs:
             wget \
             file \
             libxdo-dev \
-            libssl-dev
+            libssl-dev \
+            libx11-dev \
+            libxss-dev
 
       - name: Install Rust stable toolchain
         uses: dtolnay/rust-toolchain@stable
@@ -126,7 +130,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: npm
 
       - name: Install frontend dependencies
