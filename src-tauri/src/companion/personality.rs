@@ -175,3 +175,54 @@ impl MessageBank {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    // `Personality` is serialized PascalCase over IPC (matches the frontend
+    // union in src/ipc/types.ts exactly, per ARCHITECTURE.md section 12) --
+    // distinct from `as_str()`/`parse()` below, which are the separate
+    // snake_case DB-storage form.
+    #[test]
+    fn personality_wire_format_parses_expected_pascal_case_values() {
+        assert_eq!(
+            serde_json::from_str::<Personality>("\"Friendly\"").unwrap(),
+            Personality::Friendly
+        );
+        assert_eq!(
+            serde_json::from_str::<Personality>("\"PassiveAggressive\"").unwrap(),
+            Personality::PassiveAggressive
+        );
+    }
+
+    #[test]
+    fn personality_wire_format_rejects_snake_case_or_unknown_values() {
+        assert!(serde_json::from_str::<Personality>("\"friendly\"").is_err());
+        assert!(serde_json::from_str::<Personality>("\"Grumpy\"").is_err());
+    }
+
+    #[test]
+    fn personality_as_str_and_parse_round_trip_for_every_variant() {
+        for p in [
+            Personality::Friendly,
+            Personality::PassiveAggressive,
+            Personality::DrillSergeant,
+            Personality::Chaotic,
+            Personality::Zen,
+        ] {
+            assert_eq!(Personality::parse(p.as_str()), Some(p));
+        }
+    }
+
+    #[test]
+    fn personality_parse_rejects_unknown_db_strings() {
+        // Exercises the fallback path DB readers rely on
+        // (`Personality::parse(..).unwrap_or(Personality::Friendly)` in
+        // db/repository.rs::get_companion_profile) when a row somehow
+        // contains a value that doesn't match any `as_str()` output.
+        assert_eq!(Personality::parse("grumpy"), None);
+        assert_eq!(Personality::parse(""), None);
+        assert_eq!(Personality::parse("Friendly"), None); // wrong case
+    }
+}

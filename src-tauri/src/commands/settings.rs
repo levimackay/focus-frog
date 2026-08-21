@@ -22,6 +22,7 @@ pub async fn update_settings(
             "emergency_hotkey must not be empty".to_string(),
         ));
     }
+    security::validate_settings_ranges(&settings)?;
 
     let now = crate::now_time().to_rfc3339();
     state

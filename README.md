@@ -1,5 +1,8 @@
 # Focus Frog
 
+[![CI](https://github.com/levimackay/focus-frog/actions/workflows/ci.yml/badge.svg)](https://github.com/levimackay/focus-frog/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+
 **Keep the promises you make to yourself.**
 
 Focus Frog is a cross-platform desktop companion for focus sessions. You

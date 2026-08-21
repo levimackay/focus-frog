@@ -207,3 +207,73 @@ pub struct Transition {
     pub escalation_level: u8,
     pub session: SessionSnapshot,
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    // `AnnoyanceProfile` crosses the IPC boundary from the frontend as
+    // snake_case JSON (see ARCHITECTURE.md section 12) -- verify both the
+    // happy path and that a malformed/unknown value is rejected rather than
+    // silently defaulting or panicking.
+    #[test]
+    fn annoyance_profile_parses_expected_snake_case_values() {
+        assert_eq!(
+            serde_json::from_str::<AnnoyanceProfile>("\"gentle\"").unwrap(),
+            AnnoyanceProfile::Gentle
+        );
+        assert_eq!(
+            serde_json::from_str::<AnnoyanceProfile>("\"persistent\"").unwrap(),
+            AnnoyanceProfile::Persistent
+        );
+        assert_eq!(
+            serde_json::from_str::<AnnoyanceProfile>("\"ruthless\"").unwrap(),
+            AnnoyanceProfile::Ruthless
+        );
+        assert_eq!(
+            serde_json::from_str::<AnnoyanceProfile>("\"nuclear\"").unwrap(),
+            AnnoyanceProfile::Nuclear
+        );
+    }
+
+    #[test]
+    fn annoyance_profile_rejects_unknown_or_wrong_case_values() {
+        assert!(serde_json::from_str::<AnnoyanceProfile>("\"Gentle\"").is_err());
+        assert!(serde_json::from_str::<AnnoyanceProfile>("\"chill\"").is_err());
+        assert!(serde_json::from_str::<AnnoyanceProfile>("\"\"").is_err());
+        assert!(serde_json::from_str::<AnnoyanceProfile>("null").is_err());
+    }
+
+    // `FocusState` is serialized PascalCase (matches Rust variant names
+    // verbatim, per ARCHITECTURE.md section 12) -- confirm the wire format
+    // and that an unrecognized variant fails deserialization cleanly.
+    #[test]
+    fn focus_state_parses_expected_pascal_case_values() {
+        assert_eq!(
+            serde_json::from_str::<FocusState>("\"Intervention\"").unwrap(),
+            FocusState::Intervention
+        );
+        assert_eq!(
+            serde_json::from_str::<FocusState>("\"Completed\"").unwrap(),
+            FocusState::Completed
+        );
+    }
+
+    #[test]
+    fn focus_state_rejects_unknown_or_wrong_case_values() {
+        assert!(serde_json::from_str::<FocusState>("\"intervention\"").is_err());
+        assert!(serde_json::from_str::<FocusState>("\"Exploded\"").is_err());
+    }
+
+    #[test]
+    fn escalation_level_from_u8_saturates_at_nuclear_overlay_above_four() {
+        assert_eq!(EscalationLevel::from_u8(0), EscalationLevel::None);
+        assert_eq!(EscalationLevel::from_u8(4), EscalationLevel::NuclearOverlay);
+        // Anything >4 is not a value the engine actually produces, but
+        // `from_u8` is total -- it must not panic on out-of-range input.
+        assert_eq!(
+            EscalationLevel::from_u8(255),
+            EscalationLevel::NuclearOverlay
+        );
+    }
+}

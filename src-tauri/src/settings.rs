@@ -67,3 +67,46 @@ impl Settings {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    // `Theme` crosses IPC as snake_case/lowercase (ARCHITECTURE.md section
+    // 12), matching the frontend's `Theme` TS union exactly.
+    #[test]
+    fn theme_parses_expected_snake_case_values() {
+        assert_eq!(
+            serde_json::from_str::<Theme>("\"system\"").unwrap(),
+            Theme::System
+        );
+        assert_eq!(
+            serde_json::from_str::<Theme>("\"light\"").unwrap(),
+            Theme::Light
+        );
+        assert_eq!(
+            serde_json::from_str::<Theme>("\"dark\"").unwrap(),
+            Theme::Dark
+        );
+    }
+
+    #[test]
+    fn theme_rejects_unknown_or_wrong_case_values() {
+        assert!(serde_json::from_str::<Theme>("\"System\"").is_err());
+        assert!(serde_json::from_str::<Theme>("\"midnight\"").is_err());
+        assert!(serde_json::from_str::<Theme>("\"\"").is_err());
+    }
+
+    #[test]
+    fn settings_default_round_trips_through_json() {
+        // The whole Settings struct is stored as one JSON blob (section 5);
+        // a round-trip failure here would corrupt every user's settings row.
+        let json = serde_json::to_string(&Settings::default()).unwrap();
+        let restored: Settings = serde_json::from_str(&json).unwrap();
+        assert_eq!(restored.theme, Settings::default().theme);
+        assert_eq!(
+            restored.default_annoyance_profile,
+            Settings::default().default_annoyance_profile
+        );
+    }
+}

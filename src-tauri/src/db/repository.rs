@@ -653,6 +653,50 @@ mod tests {
         assert_eq!(count_distraction_events(&conn, "s1").unwrap(), 1);
     }
 
+    // `StatsRange` crosses IPC as snake_case (ARCHITECTURE.md section 12),
+    // matching the frontend's `StatsRange` TS union ('week' | 'month' | 'all').
+    #[test]
+    fn stats_range_parses_expected_snake_case_values() {
+        assert_eq!(
+            serde_json::from_str::<StatsRange>("\"week\"").unwrap(),
+            StatsRange::Week
+        );
+        assert_eq!(
+            serde_json::from_str::<StatsRange>("\"month\"").unwrap(),
+            StatsRange::Month
+        );
+        assert_eq!(
+            serde_json::from_str::<StatsRange>("\"all\"").unwrap(),
+            StatsRange::All
+        );
+    }
+
+    #[test]
+    fn stats_range_rejects_unknown_or_wrong_case_values() {
+        assert!(serde_json::from_str::<StatsRange>("\"Week\"").is_err());
+        assert!(serde_json::from_str::<StatsRange>("\"year\"").is_err());
+        assert!(serde_json::from_str::<StatsRange>("\"\"").is_err());
+    }
+
+    #[test]
+    fn companion_profile_falls_back_to_friendly_for_a_corrupt_personality_column() {
+        // Exercises `Personality::parse(..).unwrap_or(Personality::Friendly)`
+        // in `get_companion_profile` -- every write path (insert_session,
+        // update_companion) always writes a valid `as_str()` value, so this
+        // fallback only fires if the column is corrupted out-of-band. Insert
+        // directly via raw SQL to simulate that.
+        let (_file, conn) = test_conn();
+        get_companion_profile(&conn, "2026-01-01T00:00:00Z").unwrap(); // seed the row
+        conn.execute(
+            "UPDATE companion_profile SET personality = 'not_a_real_personality' WHERE id = 1",
+            [],
+        )
+        .unwrap();
+
+        let profile = get_companion_profile(&conn, "2026-01-01T00:00:00Z").unwrap();
+        assert_eq!(profile.personality, Personality::Friendly);
+    }
+
     #[test]
     fn companion_profile_defaults_then_updates() {
         let (_file, conn) = test_conn();
