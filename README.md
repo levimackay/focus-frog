@@ -281,5 +281,5 @@ vulnerability.
 [MIT](LICENSE) © 2026 Levi Mackay. Third-party dependency licenses are listed
 in [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md).
 
-**Last updated:** 2026-08-23 21:37 PDT
+**Last updated:** 2026-08-24 07:33 PDT
 
