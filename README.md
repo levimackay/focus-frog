@@ -255,9 +255,9 @@ profiles including Nuclear, cross-platform activity detection, local stats
 **Architected but not yet a real feature:** the companion has a `level` and
 `experience` field, and completing a session awards experience — but nothing
 is done with it yet. There's no cosmetic unlock, no level-up moment, no
-reward. Similarly, an `achievements` table exists in the database schema
-(`first_session`, `streak_3`, etc.) but nothing currently reads or writes to
-it — it's schema, not a feature. Both are natural next steps once the core
+reward. Similarly, an `achievements` table exists in the database schema (key +
+unlock timestamp) but nothing currently reads or writes to it — it's schema,
+not a feature. Both are natural next steps once the core
 loop has been used enough to know what's actually worth rewarding.
 
 **Explicitly out of scope for now:** cloud sync/accounts, mobile builds,
