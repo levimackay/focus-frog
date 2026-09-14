@@ -193,7 +193,7 @@ changes.
 Prerequisites:
 
 - [Rust](https://rustup.rs/), stable toolchain
-- Node.js 18+
+- Node.js 20.19+ or 22.12+ (Vite 7's minimum; CI runs Node 22)
 - Platform build tools for Tauri 2 — see the
   [Tauri prerequisites guide](https://v2.tauri.app/start/prerequisites/)
 
