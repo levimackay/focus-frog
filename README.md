@@ -49,7 +49,7 @@ You provide:
   | Profile | Escalation ceiling |
   | --- | --- |
   | Gentle | Quiet encouragement only |
-  | Persistent | Up to a noticeable "ignored" nudge |
+  | Persistent | Up to an on-screen intervention (same ceiling as Ruthless) |
   | Ruthless | Up to a prominent on-screen intervention |
   | Nuclear | All of the above, plus a full-screen focus overlay — **opt-in only**, with an explicit acknowledgment step during onboarding |
 
