@@ -18,7 +18,7 @@ jobs:
     name: Frontend (typecheck, lint, test, build)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - uses: actions/setup-node@v4
         with:
@@ -44,7 +44,7 @@ jobs:
     name: Rust (fmt, clippy, test)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       # Tauri's Rust build needs the same system deps as the Linux
       # bundler even for `cargo check`/`clippy`/`test`, since tauri
@@ -100,7 +100,7 @@ jobs:
           - platform: windows-latest
     runs-on: ${{ matrix.platform }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Install Tauri Linux system dependencies
         if: matrix.platform == 'ubuntu-latest'
